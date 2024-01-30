@@ -1,14 +1,19 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Description: Network resource template part1
+AWSTemplateFormatVersion: '2010-09-09'
+
 Resources:
-  # VPCの設定
-  sbcntrVpc:
-    Type: AWS::EC2::VPC
+  IAMUser1:
+    Type: AWS::IAM::User
     Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsHostnames: true
-      EnableDnsSupport: true
-      InstanceTenancy: default
-      Tags:
-        - Key: Name
-          Value: test-vpc
+      Path: /
+      UserName: IAMUser1
+
+  IAMUser1AccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref IAMUser1
+
+  IAMUser1AccessKeySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${IAMUser1}-credentials
+      SecretString: !Sub "{\"accessKeyId\":\"${IAMUser1AccessKey}\",\"secretAccessKey\":\"${IAMUser1AccessKey.SecretAccessKey}\"}"
